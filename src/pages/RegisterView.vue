@@ -10,13 +10,13 @@
       v-model="username"
       type="text"
       class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
-      placeholder="이메일"
+      placeholder="아이디"
     />
     <input
       v-model="email"
       type="text"
       class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
-      placeholder="아이디"
+      placeholder="이메일"
     />
     <input
       v-model="password"
@@ -48,7 +48,8 @@ export default {
 
     const onRegister = async () => {
       try {
-        const credential = await auth.createUserWithEmailandPassword(
+        loading.value = true
+        const credential = await auth.createUserWithEmailAndPassword(
           email.value,
           password.value
         );
@@ -58,6 +59,9 @@ export default {
           "🚀 ~ file: RegisterView.vue ~ line 51 ~ onRegister ~ err",
           err
         );
+        alert(err.message)
+      } finally {
+        loading.value = false
       }
     };
     return {
