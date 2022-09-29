@@ -119,6 +119,7 @@ const router = createRouter({
   routes,
 });
 
+// navigation guard
 router.beforeEach((to, from, next) => {
   const currentUser = store.state.user;
   const requireAuth = to.matched.some((record) => record.meta.requireAuth);
