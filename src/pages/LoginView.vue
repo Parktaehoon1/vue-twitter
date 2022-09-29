@@ -14,12 +14,17 @@
       placeholder="이메일"
     />
     <input
+      @keyup.enter="onLogin"
       v-model="password"
-      type="text"
+      type="password"
       class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
       placeholder="비밀번호"
     />
+    <button v-if="loading" class="w-96 rounded bg-blue-50 text-white py-4">
+      로그인 중 입니다.
+    </button>
     <button
+      v-if="!loading"
       class="w-96 rounded bg-primary text-white py-4 hover:bg-dark"
       @click="onLogin"
     >
@@ -34,18 +39,53 @@
 
 <script>
 import { ref } from "vue";
+import { auth, USER_COLLECTION } from "@/firebase";
+import { useRouter } from "vue-router";
+import store from "@/store";
 export default {
   setup() {
-    const username = ref("");
     const email = ref("");
     const password = ref("");
     const loading = ref(false);
+    const router = useRouter();
 
-    const onLogin = () => {
-      console.log(username.value, email.value, password.value);
+    const onLogin = async () => {
+      if (!email.value || !password.value) {
+        alert("이메일, 비밀번호를 모두 입력해주세요");
+        return;
+      }
+      try {
+        loading.value = true;
+        const { user } = await auth.signInWithEmailAndPassword(
+          email.value,
+          password.value
+        );
+        // get user info
+        const doc = await USER_COLLECTION.doc(user.uid).get();
+        store.commit("SET_USER", doc.data());
+        console.log(store.state.user);
+
+        router.replace("/");
+      } catch (err) {
+        switch (err.code) {
+          case "auth/invalid-email":
+            alert("잘못된 이메일 형식입니다.");
+            break;
+          case "auth/wrong-password":
+            alert("비밀번호가 틀립니다.");
+            break;
+          case "auth/user-not-found":
+            alert("등록되지 않은 이메일입니다.");
+            break;
+          default:
+            alert(err.message);
+            break;
+        }
+      } finally {
+        loading.value = false;
+      }
     };
     return {
-      username,
       email,
       password,
       loading,

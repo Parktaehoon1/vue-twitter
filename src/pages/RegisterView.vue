@@ -19,6 +19,7 @@
       placeholder="이메일"
     />
     <input
+      @keyup.enter="onRegister"
       v-model="password"
       type="password"
       class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
@@ -53,6 +54,11 @@ export default {
     const router = useRouter();
 
     const onRegister = async () => {
+      if (!username.value || !email.value || !password.value) {
+        alert("유저네임, 이메일, 비밀번호를 모두 입력해주세요");
+        return;
+      }
+
       try {
         loading.value = true;
         const credential = await auth.createUserWithEmailAndPassword(
@@ -79,11 +85,20 @@ export default {
         router.push("/login");
         // 라우터로 이동
       } catch (err) {
-        console.log(
-          "🚀 ~ file: RegisterView.vue ~ line 51 ~ onRegister ~ err",
-          err
-        );
-        alert(err.message);
+        switch (err.code) {
+          case "auth/invalid-email":
+            alert("이메일을 바르게 입력해주세요");
+            break;
+          case "auth/weak-password":
+            alert("비밀번호가 너무 쉬워요");
+            break;
+          case "auth/email-already-in-use":
+            alert("이미 가입되어 있는 이메일 입니다.");
+            break;
+          default:
+            alert("회원가입실패");
+            break;
+        }
       } finally {
         // finally는 try가 실행이되든 실패를 하든 실행되는 것
         loading.value = false;

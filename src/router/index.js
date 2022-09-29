@@ -5,6 +5,7 @@ import MessageView from "@/pages/MessageView.vue";
 import ProfileView from "@/pages/ProfileView.vue";
 import RegisterView from "@/pages/RegisterView.vue";
 import LoginView from "@/pages/LoginView.vue";
+import store from "@/store";
 
 const routes = [
   {
@@ -15,6 +16,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -25,6 +27,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -35,6 +38,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -45,6 +49,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -55,6 +60,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -65,6 +71,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -75,6 +82,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -85,6 +93,7 @@ const routes = [
     meta: {
       isMenu: true,
       layout: "DefaultLayout",
+      requireAuth: true,
     },
   },
   {
@@ -110,54 +119,18 @@ const router = createRouter({
   routes,
 });
 
-export default router;
+router.beforeEach((to, from, next) => {
+  const currentUser = store.state.user;
+  const requireAuth = to.matched.some((record) => record.meta.requireAuth);
+  console.log("auth값", requireAuth);
+  if (requireAuth && !currentUser) {
+    next("/login");
+  } else {
+    next();
+  }
+  console.log(to);
+  console.log(from);
+  // router.push("/login");
+});
 
-//  <router-link
-//             to="/"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="fas fa-hashtag fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">탐색하기</span>
-//           </router-link>
-//           <router-link
-//             to="/notifications"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="far fa-bell fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">알림</span>
-//           </router-link>
-//           <router-link
-//             to="/messages"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="far fa-envelope fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">쪽지</span>
-//           </router-link>
-//           <router-link
-//             to="/"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="far fa-bookmark fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">북마크</span>
-//           </router-link>
-//           <router-link
-//             to="/"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="far fa-list-alt fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">리스트</span>
-//           </router-link>
-//           <router-link
-//             to="/profile"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="far fa-user fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">프로필</span>
-//           </router-link>
-//           <router-link
-//             to="/"
-//             class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
-//           >
-//             <i class="fas fa-ellipsis-h fa-fw text-2xl"></i>
-//             <span class="ml-5 text-xl hidden xl:inline-block">더보기</span>
-//           </router-link>
+export default router;
