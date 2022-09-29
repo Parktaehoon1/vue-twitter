@@ -36,14 +36,16 @@
 import { ref } from "vue";
 export default {
   setup() {
+    const username = ref("");
     const email = ref("");
     const password = ref("");
     const loading = ref(false);
 
     const onLogin = () => {
-      console.log(email.value, password.value);
+      console.log(username.value, email.value, password.value);
     };
     return {
+      username,
       email,
       password,
       loading,

@@ -24,7 +24,11 @@
       class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
       placeholder="비밀번호"
     />
+    <button v-if="loading" class="w-96 rounded bg-blue-50 text-white py-4">
+      회원가입 중 입니다.
+    </button>
     <button
+      v-if="!loading"
       class="w-96 rounded bg-primary text-white py-4 hover:bg-dark"
       @click="onRegister"
     >
@@ -38,30 +42,51 @@
 
 <script>
 import { ref } from "vue";
-import { auth } from "@/firebase";
+import { auth, USER_COLLECTION } from "@/firebase";
+import { useRouter } from "vue-router";
 export default {
   setup() {
     const username = ref("");
     const email = ref("");
     const password = ref("");
     const loading = ref(false);
+    const router = useRouter();
 
     const onRegister = async () => {
       try {
-        loading.value = true
+        loading.value = true;
         const credential = await auth.createUserWithEmailAndPassword(
           email.value,
           password.value
         );
-        console.log(credential);
+        const user = credential.user;
+        // const {user} = await auth.createUserWithEmailAndPassword(
+        //   email.value,
+        //   password.value
+        // );
+        // 코드와 동일.
+        const doc = USER_COLLECTION.doc(user.uid);
+        await doc.set({
+          uid: user.uid,
+          email: email.value,
+          profile_image_url: "/profile.jpeg",
+          num_tweets: 0,
+          followers: [],
+          followings: [],
+          created_at: Date.now(),
+        });
+        alert("회원 가입에 성공하셨습니다. 로그인 해주세요.");
+        router.push("/login");
+        // 라우터로 이동
       } catch (err) {
         console.log(
           "🚀 ~ file: RegisterView.vue ~ line 51 ~ onRegister ~ err",
           err
         );
-        alert(err.message)
+        alert(err.message);
       } finally {
-        loading.value = false
+        // finally는 try가 실행이되든 실패를 하든 실행되는 것
+        loading.value = false;
       }
     };
     return {
