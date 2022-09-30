@@ -12,7 +12,9 @@
           <!-- route로 연결 -->
           <router-link
             :to="route.path"
-            class="hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer"
+            :class="`hover:text-primary hover:bg-blue-50 px-4 py-2 rounded-full cursor-pointer ${
+              router.currentRoute.value.name == route.name ? 'text-primary' : ''
+            }`"
             v-for="route in routes"
             :key="route"
           >
@@ -35,14 +37,16 @@
         </div>
       </div>
       <!-- profile button -->
-      <div class="xl:pr-3 mb-3 relative" @click="showProfileDropdown= true">
+      <div class="xl:pr-3 mb-3 relative" @click="showProfileDropdown = true">
         <button
           class="hidden xl:flex mt-3 px-2 py-1 w-full h-12 rounded-full hover:bg-blue-50 items-center"
         >
           <img src="http://picsum.photos/100" class="w-10 h-10 rounded-full" />
           <div class="xl:ml-2 hidden xl:block">
-            <div class="text-sm font-bold">taehoon.com</div>
-            <div class="text-xs text-gray-500 text-left">@taehoon</div>
+            <div class="text-sm font-bold">{{ currentUser.email }}</div>
+            <div class="text-xs text-gray-500 text-left">
+              @{{ currentUser.username }}
+            </div>
           </div>
           <i
             class="ml-auto fas fa-ellipsis-h fa-fw text-xs hidden xl:block"
@@ -51,7 +55,7 @@
 
         <div class="xl:hidden flex justify-center">
           <img
-            src="http://picsum.photos/100"
+            :src="currentUser.profile_image_url"
             class="w-10 h-10 rounded-full cursor-pointer hover:opacity-80"
           />
         </div>
@@ -62,43 +66,60 @@
       <router-view></router-view>
     </div>
     <!-- profile dropdown menu -->
-    <div class="absolute bottom-20 left-12 shadow rounded-lg w-60 bg-white" v-if="showProfileDropdown" @click="showProfileDropdown=false">
-      <button class="hover:bg-gray-50 border-b border-gray-100 flex p-3 w-full items-center">
-        <img src="http://picsum.photos/200" class="w-10 h-10 rounded-full">
+    <div
+      class="absolute bottom-20 left-12 shadow rounded-lg w-60 bg-white"
+      v-if="showProfileDropdown"
+      @click="showProfileDropdown = false"
+    >
+      <button
+        class="hover:bg-gray-50 border-b border-gray-100 flex p-3 w-full items-center"
+      >
+        <img
+          :src="currentUser.profile_image_url"
+          class="w-10 h-10 rounded-full"
+        />
         <div class="ml-2">
-          <div class="font-bold text-sm">Taehoon@gmail.com</div>
-          <div class="text-left text-gray-500">@Taehoon</div>
+          <div class="font-bold text-sm">{{ currentUser.email }}</div>
+          <div class="text-left text-gray-500">@{{ currentUser.username }}</div>
         </div>
         <i class="fas fa-check text-primary ml-auto"></i>
       </button>
-      <button class="p-3 hover:bg-gray-50 w-full text-left text-sm" @click="onLogout">
-        @taehoon 계정에서 로그아웃
+      <button
+        class="p-3 hover:bg-gray-50 w-full text-left text-sm"
+        @click="onLogout"
+      >
+        @{{ currentUser.username }} 계정에서 로그아웃
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import router from "@/router";
-import {auth} from "@/firebase"
-import store from "@/store"
+import { auth } from "@/firebase";
+import store from "@/store";
 export default {
   setup() {
     const routes = ref([]);
-    const showProfileDropdown = ref(false)
-    const onLogout = async () => {
-      await auth.signOut()
-      store.commit("SET_USER", null)
-      await router.replace('/login')
-    }
+    const showProfileDropdown = ref(false);
 
+    const currentUser = computed(() => store.state.user);
+    const onLogout = async () => {
+      await auth.signOut();
+      store.commit("SET_USER", null);
+      await router.replace("/login");
+    };
 
     onBeforeMount(() => {
       routes.value = router.options.routes;
     });
     return {
-      routes,showProfileDropdown,onLogout
+      routes,
+      showProfileDropdown,
+      onLogout,
+      currentUser,
+      router,
     };
   },
 };

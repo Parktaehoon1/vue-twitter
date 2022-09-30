@@ -63,7 +63,6 @@ export default {
         // get user info
         const doc = await USER_COLLECTION.doc(user.uid).get();
         store.commit("SET_USER", doc.data());
-        console.log(store.state.user);
 
         router.replace("/");
       } catch (err) {

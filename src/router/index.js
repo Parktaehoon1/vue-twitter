@@ -10,6 +10,7 @@ import store from "@/store";
 const routes = [
   {
     path: "/",
+    name: "home",
     component: HomeView,
     title: "홈",
     icon: "fas fa-home fa-fw text-2xl",
@@ -21,6 +22,7 @@ const routes = [
   },
   {
     path: "/",
+    name: "explore",
     component: HomeView,
     title: "탐색하기",
     icon: "fas fa-hashtag fa-fw text-2xl",
@@ -32,6 +34,7 @@ const routes = [
   },
   {
     path: "/notifications",
+    name: "notifications",
     component: NotificationsView,
     title: "알림",
     icon: "far fa-bell fa-fw text-2xl",
@@ -43,6 +46,7 @@ const routes = [
   },
   {
     path: "/messages",
+    name: "messages",
     component: MessageView,
     title: "쪽지",
     icon: "far fa-envelope fa-fw text-2xl",
@@ -54,7 +58,8 @@ const routes = [
   },
   {
     path: "/",
-    component: MessageView,
+    name: "bookmarks",
+    component: HomeView,
     title: "북마크",
     icon: "far fa-bookmark fa-fw text-2xl",
     meta: {
@@ -65,7 +70,8 @@ const routes = [
   },
   {
     path: "/",
-    component: MessageView,
+    name: "list",
+    component: HomeView,
     title: "리스트",
     icon: "far fa-list-alt fa-fw text-2xl",
     meta: {
@@ -76,6 +82,7 @@ const routes = [
   },
   {
     path: "/profile",
+    name: "profile",
     component: ProfileView,
     title: "프로필",
     icon: "far fa-user fa-fw text-2xl",
@@ -87,7 +94,8 @@ const routes = [
   },
   {
     path: "/",
-    component: ProfileView,
+    name: "more",
+    component: HomeView,
     title: "더보기",
     icon: "fas fa-ellipsis-h fa-fw text-2xl",
     meta: {
@@ -98,6 +106,7 @@ const routes = [
   },
   {
     path: "/register",
+    name: "register",
     component: RegisterView,
     meta: {
       isMenu: false,
@@ -106,6 +115,7 @@ const routes = [
   },
   {
     path: "/login",
+    name: "login",
     component: LoginView,
     meta: {
       isMenu: false,
@@ -124,11 +134,9 @@ router.beforeEach((to, from, next) => {
   const currentUser = store.state.user;
   const requireAuth = to.matched.some((record) => record.meta.requireAuth);
   console.log("auth값", requireAuth);
-  if (requireAuth && !currentUser) {
-    next("/login");
-  } else {
-    next();
-  }
+  if (requireAuth && !currentUser) next("/login");
+  else next();
+
   console.log(to);
   console.log(from);
   // router.push("/login");
