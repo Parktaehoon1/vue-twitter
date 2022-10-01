@@ -51,7 +51,7 @@ import Trends from "@/components/TrendsView.vue";
 import Tweet from "@/components/TweetView.vue";
 import { ref, computed, onBeforeMount } from "vue";
 import store from "@/store";
-import { TWEET_COLLECTION } from "@/firebase";
+import { TWEET_COLLECTION, USER_COLLECTION } from "@/firebase";
 export default {
   components: {
     Trends,
@@ -63,18 +63,28 @@ export default {
     const tweets = ref([]);
 
     onBeforeMount(() => {
-      TWEET_COLLECTION.onSnapshot((snapshot) => {
-        snapshot.docChanges().forEach((change) => {
+      TWEET_COLLECTION.orderBy("created_at", "desc").onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(async (change) => {
+          let tweet = await getUserInfo(change.doc.data());
+
           if (change.type === "added") {
-            tweets.value.splice(change.newIndex, 0, change.doc.data());
+            tweets.value.splice(change.newIndex, 0, tweet);
           } else if (change.type === "modified") {
-            tweets.value.splice(change.oldIndex, 1, change.doc.data());
+            tweets.value.splice(change.oldIndex, 1, tweet);
           } else if (change.type === "removed") {
             tweets.value.splice(change.oldIndex, 1);
           }
         });
       });
     });
+
+    const getUserInfo = async (tweet) => {
+      const doc = await USER_COLLECTION.doc(tweet.uid).get();
+      tweet.profile_image_url = doc.data().profile_image_url;
+      tweet.email = doc.data().email;
+      tweet.username = doc.data().username;
+      return tweet;
+    };
 
     const onAddTweet = async () => {
       try {
