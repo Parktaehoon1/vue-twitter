@@ -6,18 +6,31 @@
       }`"
     ></i>
     <span class="text-2xl font-bold">트위터 로그인</span>
-
     <input
       v-model="email"
       type="text"
-      class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
+      class="
+        rounded
+        w-96
+        px-4
+        py-3
+        border border-gray-300
+        focus:ring-2 focus:border-primary focus:outline-none
+      "
       placeholder="이메일"
     />
     <input
       @keyup.enter="onLogin"
       v-model="password"
       type="password"
-      class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
+      class="
+        rounded
+        w-96
+        px-4
+        py-3
+        border border-gray-300
+        focus:ring-2 focus:border-primary focus:outline-none
+      "
       placeholder="비밀번호"
     />
     <button v-if="loading" class="w-96 rounded bg-blue-50 text-white py-4">
@@ -60,10 +73,8 @@ export default {
           email.value,
           password.value
         );
-        // get user info
         const doc = await USER_COLLECTION.doc(user.uid).get();
         store.commit("SET_USER", doc.data());
-
         router.replace("/");
       } catch (err) {
         switch (err.code) {

@@ -9,27 +9,48 @@
     <input
       v-model="username"
       type="text"
-      class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
+      class="
+        rounded
+        w-96
+        px-4
+        py-3
+        border border-gray-300
+        focus:ring-2 focus:border-primary focus:outline-none
+      "
       placeholder="아이디"
     />
     <input
       v-model="email"
       type="text"
-      class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
+      class="
+        rounded
+        w-96
+        px-4
+        py-3
+        border border-gray-300
+        focus:ring-2 focus:border-primary focus:outline-none
+      "
       placeholder="이메일"
     />
     <input
       @keyup.enter="onRegister"
       v-model="password"
       type="password"
-      class="rounded w-96 px-4 py-3 border border-gray-300 focus:ring-2 focus:border-primary focus:outline-none"
+      class="
+        rounded
+        w-96
+        px-4
+        py-3
+        border border-gray-300
+        focus:ring-2 focus:border-primary focus:outline-none
+      "
       placeholder="비밀번호"
     />
     <button v-if="loading" class="w-96 rounded bg-blue-50 text-white py-4">
       회원가입 중 입니다.
     </button>
     <button
-      v-if="!loading"
+      v-else
       class="w-96 rounded bg-primary text-white py-4 hover:bg-dark"
       @click="onRegister"
     >
@@ -61,16 +82,10 @@ export default {
 
       try {
         loading.value = true;
-        const credential = await auth.createUserWithEmailAndPassword(
+        const { user } = await auth.createUserWithEmailAndPassword(
           email.value,
           password.value
         );
-        const user = credential.user;
-        // const {user} = await auth.createUserWithEmailAndPassword(
-        //   email.value,
-        //   password.value
-        // );
-        // 코드와 동일.
         const doc = USER_COLLECTION.doc(user.uid);
         await doc.set({
           uid: user.uid,
