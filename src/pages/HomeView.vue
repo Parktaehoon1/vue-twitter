@@ -12,6 +12,7 @@
         />
         <div class="ml-2 flex-1 flex flex-col">
           <textarea
+            @keyup.enter="onAddTweet"
             v-model="tweetBody"
             placeholder="무슨 일이 일어나고 있나요?"
             class="w-full text-lg font-bold focus:outline-none mb-3 resize-none"
@@ -19,14 +20,31 @@
           <div class="text-right">
             <button
               v-if="!tweetBody.length"
-              class="bg-blue-50 text-sm font-bold text-white px-4 py-1 rounded-full"
+              class="
+                bg-blue-50
+                text-sm
+                font-bold
+                text-white
+                px-4
+                py-1
+                rounded-full
+              "
             >
               트윗
             </button>
             <button
               v-else
               @click="onAddTweet"
-              class="bg-primary hover:bg-dark text-sm font-bold text-white px-4 py-1 rounded-full"
+              class="
+                bg-primary
+                hover:bg-dark
+                text-sm
+                font-bold
+                text-white
+                px-4
+                py-1
+                rounded-full
+              "
             >
               트윗
             </button>
@@ -52,7 +70,7 @@ import Tweet from "@/components/TweetView.vue";
 import { ref, computed, onBeforeMount } from "vue";
 import store from "@/store";
 import { TWEET_COLLECTION, USER_COLLECTION } from "@/firebase";
-import addTweet from '@/utils/addTweet'
+import addTweet from "@/utils/addTweet";
 export default {
   components: {
     Trends,
@@ -89,7 +107,7 @@ export default {
 
     const onAddTweet = async () => {
       try {
-        await addTweet(tweetBody.value, currentUser.value)
+        await addTweet(tweetBody.value, currentUser.value);
         tweetBody.value = "";
       } catch (err) {
         console.log("on add tweet err on homepage", err);

@@ -47,6 +47,11 @@
     <router-link to="/register">
       <button class="text-primary">계정이 없으신가요? 회원가입 하기</button>
     </router-link>
+
+    <div class="mt-10 p-4 border-double border-4 border-sky-500">
+      id: test@test.com<br />
+      pw: testtest
+    </div>
   </div>
 </template>
 
